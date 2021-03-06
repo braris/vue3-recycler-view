@@ -1,7 +1,7 @@
 {
   "name": "vue3-recycler-view",
   "version": "1.0.0",
-  "description": "",
+  "description": "A vue3 component that recycles child components to improve scrolling performance for large lists.",
 
   "main": "dist/vue3-recycler-view.ssr.js",
   "browser": "dist/vue3-recycler-view.esm.js",
@@ -12,7 +12,8 @@
   "files": [
     "dist/*",
     "vue3-recycler-view.d.ts",
-    "src/**/*.vue"
+    "src/**/*.vue",
+    "src/**/*.ts"
   ],
   "sideEffects": false,
 
@@ -23,6 +24,25 @@
     "build:es": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format es",
     "build:unpkg": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format iife"
   },
+
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/braris/vue3-recycler-view.git"
+  },
+  "keywords": [
+    "vue",
+    "vue3",
+    "big-data",
+    "big-list",
+    "scroll-list",
+    "recycler-view"
+  ],
+  "author": "braris",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/braris/vue3-recycler-view/issues"
+  },
+  "homepage": "https://github.com/braris/vue3-recycler-view#readme",
 
   "dependencies": {
   },

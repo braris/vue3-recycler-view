@@ -1,2 +1,2 @@
 # vue3-recycler-view
-Vue 3 component for recycler view
+A vue3 component that recycles child components to improve scrolling performance for large lists.
