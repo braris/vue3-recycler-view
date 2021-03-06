@@ -7,7 +7,7 @@ import { ConcreteComponent } from "@vue/runtime-core";
 
 export type IdType = number | string;
 
-export const virtualProps = {
+export const recyclerViewProps = {
     dataKey: {
         type: [String, Function],
         required: true
@@ -110,7 +110,7 @@ export const virtualProps = {
     }
 };
 
-export interface VirtualProps {
+export interface RecyclerViewProps {
     dataKey: string | Function;
     // eslint-disable-next-line
     dataSources: Array<any>;

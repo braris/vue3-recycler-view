@@ -1,6 +1,6 @@
 {
   "name": "vue3-recycler-view",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "A vue3 component that recycles child components to improve scrolling performance for large lists.",
   "main": "dist/vue3-recycler-view.ssr.js",
   "browser": "dist/vue3-recycler-view.esm.js",
@@ -9,9 +9,7 @@
   "types": "vue3-recycler-view.d.ts",
   "files": [
     "dist/*",
-    "vue3-recycler-view.d.ts",
-    "src/**/*.vue",
-    "src/**/*.ts"
+    "vue3-recycler-view.d.ts"
   ],
   "sideEffects": false,
   "scripts": {
@@ -54,6 +52,8 @@
     "@vue/cli-plugin-typescript": "^4.5.10",
     "@vue/cli-service": "^4.5.10",
     "@vue/compiler-sfc": "^3.0.5",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "core-js": "^3.9.1",
     "cross-env": "^7.0.3",
     "minimist": "^1.2.5",
     "postcss": "^8.2.3",

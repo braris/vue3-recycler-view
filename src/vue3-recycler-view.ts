@@ -1,5 +1,5 @@
 import { h, ref, Ref, SetupContext, onActivated, VNode, onMounted, onUnmounted, watch } from "vue";
-import { IdType, ItemProps, SlotProps, virtualProps, VirtualProps } from "@/props";
+import { IdType, ItemProps, SlotProps, recyclerViewProps, RecyclerViewProps } from "@/props";
 import { Virtual, Range, RangeUpdate } from "@/virtual";
 import { Item, Slot } from "@/item";
 import { ConcreteComponent } from "@vue/runtime-core";
@@ -20,20 +20,20 @@ const SLOT_TYPE = {
 
 type DirectionKey = "scrollLeft" | "scrollTop"
 
-function isHorizontal (props: VirtualProps) {
+function isHorizontal (props: RecyclerViewProps) {
   return props.direction === "horizontal";
 }
 
-function getDirectionKey (props: VirtualProps): DirectionKey {
+function getDirectionKey (props: RecyclerViewProps): DirectionKey {
   return isHorizontal(props) ? "scrollLeft" : "scrollTop";
 }
 
 // noinspection JSUnusedGlobalSymbols
 export default {
   name: "vue3-recycler-view",
-  props: virtualProps,
+  props: recyclerViewProps,
   emits: [EMITTED_EVENT_ITEM_RESIZED, EMITTED_EVENT_SCROLL, EMITTED_EVENT_TO_TOP, EMITTED_EVENT_TO_BOTTOM],
-  setup (props: VirtualProps, context: SetupContext) {
+  setup (props: RecyclerViewProps, context: SetupContext) {
     const root: Ref = ref(null);
     const shepherd: Ref = ref(null);
 
@@ -92,7 +92,7 @@ export default {
   }
 };
 
-function installVirtual (props: VirtualProps, range: Ref<Range>, rangeUpdate: RangeUpdate): Virtual {
+function installVirtual (props: RecyclerViewProps, range: Ref<Range>, rangeUpdate: RangeUpdate): Virtual {
   const result = new Virtual({
     slotHeaderSize: 0,
     slotFooterSize: 0,
@@ -107,7 +107,7 @@ function installVirtual (props: VirtualProps, range: Ref<Range>, rangeUpdate: Ra
   return result;
 }
 
-function getUniqueIdFromDataSources (props: VirtualProps): IdType[] {
+function getUniqueIdFromDataSources (props: RecyclerViewProps): IdType[] {
   const dataKey = props.dataKey;
   return props.dataSources.map(
       (dataSource) => typeof dataKey === "function" ? dataKey(dataSource) : dataSource[dataKey]
@@ -132,7 +132,7 @@ function onSlotResized (virtual: Virtual, type: string, size: number, hasInit: b
 }
 
 // set current scroll position to a expectant offset
-function scrollToOffset (props: VirtualProps, root: HTMLElement, offset: number) {
+function scrollToOffset (props: RecyclerViewProps, root: HTMLElement, offset: number) {
   const directionKey = getDirectionKey(props);
   if (props.pageMode) {
     document.body[directionKey] = offset;
@@ -145,7 +145,7 @@ function scrollToOffset (props: VirtualProps, root: HTMLElement, offset: number)
 }
 
 // set current scroll position to a expectant index
-function scrollToIndex (props: VirtualProps, root: HTMLElement, shepherd: HTMLElement, virtual: Virtual, index: number) {
+function scrollToIndex (props: RecyclerViewProps, root: HTMLElement, shepherd: HTMLElement, virtual: Virtual, index: number) {
   // scroll to bottom
   if (index >= props.dataSources.length - 1) {
     scrollToBottom(props, root, shepherd);
@@ -156,7 +156,7 @@ function scrollToIndex (props: VirtualProps, root: HTMLElement, shepherd: HTMLEl
 }
 
 // set current scroll position to bottom
-function scrollToBottom (props: VirtualProps, root: HTMLElement, shepherd: HTMLElement) {
+function scrollToBottom (props: RecyclerViewProps, root: HTMLElement, shepherd: HTMLElement) {
   if (shepherd) {
     const horizontal = isHorizontal(props);
     const offset = shepherd[horizontal ? "offsetLeft" : "offsetTop"];
@@ -204,7 +204,7 @@ function getScrollSize (root: HTMLElement, pageMode: boolean, isHorizontal: bool
   }
 }
 
-function onScroll (props: VirtualProps, context: SetupContext, root: HTMLElement, virtual: Virtual, evt: Event) {
+function onScroll (props: RecyclerViewProps, context: SetupContext, root: HTMLElement, virtual: Virtual, evt: Event) {
   const directionKey = getDirectionKey(props);
   const horizontal = isHorizontal(props);
   const offset = getOffset(root, props.pageMode, directionKey);
@@ -221,7 +221,7 @@ function onScroll (props: VirtualProps, context: SetupContext, root: HTMLElement
 }
 
 // emit event in special position
-function emitEvent (props: VirtualProps, context: SetupContext, virtual: Virtual, offset: number, clientSize: number, scrollSize: number, evt: Event) {
+function emitEvent (props: RecyclerViewProps, context: SetupContext, virtual: Virtual, offset: number, clientSize: number, scrollSize: number, evt: Event) {
   context.emit(EMITTED_EVENT_SCROLL, evt, virtual.getRange());
 
   if (virtual.isFront() && !!props.dataSources.length && (offset - props.topThreshold <= 0)) {
@@ -235,7 +235,7 @@ function emitEvent (props: VirtualProps, context: SetupContext, virtual: Virtual
 
 // when using page mode we need update slot header size manually
 // taking root offset relative to the browser as slot header size
-function updatePageModeFront (props: VirtualProps, virtual: Virtual, root: HTMLElement) {
+function updatePageModeFront (props: RecyclerViewProps, virtual: Virtual, root: HTMLElement) {
   if (root) {
     const rect = root.getBoundingClientRect();
     const defaultView = root.ownerDocument.defaultView;
@@ -244,7 +244,7 @@ function updatePageModeFront (props: VirtualProps, virtual: Virtual, root: HTMLE
   }
 }
 
-function render (props: VirtualProps, context: SetupContext, root: Ref, shepherd: Ref, virtual: Virtual, range: Ref<Range>) {
+function render (props: RecyclerViewProps, context: SetupContext, root: Ref, shepherd: Ref, virtual: Virtual, range: Ref<Range>) {
   return () => {
     const { header, footer } = context.slots;
     const { padFront, padBehind } = range.value;
@@ -325,7 +325,7 @@ function render (props: VirtualProps, context: SetupContext, root: Ref, shepherd
 // get the real render slots based on range data
 // in-place patch strategy will try to reuse components as possible
 // so those components that are reused will not trigger lifecycle mounted
-function getRenderSlots (props: VirtualProps, context: SetupContext, virtual: Virtual, range: Ref<Range>): VNode[] {
+function getRenderSlots (props: RecyclerViewProps, context: SetupContext, virtual: Virtual, range: Ref<Range>): VNode[] {
   const slots = [];
   const { start, end } = range.value;
   const {
