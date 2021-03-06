@@ -1,22 +1,17 @@
 {
   "name": "vue3-recycler-view",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "A vue3 component that recycles child components to improve scrolling performance for large lists.",
-
   "main": "dist/vue3-recycler-view.ssr.js",
   "browser": "dist/vue3-recycler-view.esm.js",
   "module": "dist/vue3-recycler-view.esm.js",
   "unpkg": "dist/vue3-recycler-view.min.js",
   "types": "vue3-recycler-view.d.ts",
-
   "files": [
     "dist/*",
-    "vue3-recycler-view.d.ts",
-    "src/**/*.vue",
-    "src/**/*.ts"
+    "vue3-recycler-view.d.ts"
   ],
   "sideEffects": false,
-
   "scripts": {
     "serve": "vue-cli-service serve dev/serve.ts",
     "build": "cross-env NODE_ENV=production rollup --config build/rollup.config.js",
@@ -24,7 +19,6 @@
     "build:es": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format es",
     "build:unpkg": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format iife"
   },
-
   "repository": {
     "type": "git",
     "url": "git+https://github.com/braris/vue3-recycler-view.git"
@@ -43,10 +37,7 @@
     "url": "https://github.com/braris/vue3-recycler-view/issues"
   },
   "homepage": "https://github.com/braris/vue3-recycler-view#readme",
-
-  "dependencies": {
-  },
-
+  "dependencies": {},
   "devDependencies": {
     "@babel/core": "^7.12.10",
     "@babel/preset-env": "^7.12.11",
@@ -56,10 +47,13 @@
     "@rollup/plugin-commonjs": "^17.0.0",
     "@rollup/plugin-node-resolve": "^11.0.1",
     "@rollup/plugin-replace": "^2.3.4",
+    "@types/resize-observer-browser": "^0.1.5",
     "@vue/cli-plugin-babel": "^4.5.10",
     "@vue/cli-plugin-typescript": "^4.5.10",
     "@vue/cli-service": "^4.5.10",
     "@vue/compiler-sfc": "^3.0.5",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "core-js": "^3.9.1",
     "cross-env": "^7.0.3",
     "minimist": "^1.2.5",
     "postcss": "^8.2.3",

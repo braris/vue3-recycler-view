@@ -1,7 +1,7 @@
 import { App, DefineComponent, Plugin } from 'vue';
 
 // Import vue component
-import component from '@/vue3-recycler-view.vue';
+import component from '@/vue3-recycler-view';
 
 // Define typescript interfaces for installable component
 type InstallableComponent = DefineComponent<{}, {}, any> & { install: Exclude<Plugin['install'], undefined> };
