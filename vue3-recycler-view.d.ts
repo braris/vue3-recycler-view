@@ -1,12 +1,12 @@
-import { DefineComponent, Plugin, ConcreteComponent } from 'vue';
+import { DefineComponent, Plugin, ConcreteComponent } from "vue";
 
-declare const Vue3RecyclerView: DefineComponent<{}, {}, any> & { install: Exclude<Plugin['install'], undefined> };
+declare const Vue3RecyclerView: DefineComponent<{}, {}, any> & { install: Exclude<Plugin["install"], undefined> };
 export default Vue3RecyclerView;
 
 export interface RecyclerViewProps {
     dataKey: string | Function;
     dataSources: Array<any>;
-    dataComponent: ConcreteComponent<ExtraProps>;
+    dataComponent: ConcreteComponent<ListItemProps>;
     keeps: number;
     extraProps: object;
     estimateSize: number;
@@ -33,7 +33,8 @@ export interface RecyclerViewProps {
     itemScopedSlots: object;
 }
 
-export interface ExtraProps {
-    source?: object;
-    index?: number;
+export interface ListItemProps<T = object, P = object> {
+    source: T;
+    index: number;
+    extraProps: P
 }
