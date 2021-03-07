@@ -1,7 +1,14 @@
 import { h, onBeforeUnmount, onMounted, onUpdated, Ref, ref, SetupContext } from "vue";
 import { ExtraProps, ItemProps, itemProps, SlotProps, slotProps } from "@/props";
 
-function useWrapper (props: SlotProps, context: SetupContext) {
+export const EVENT_TYPE = {
+    ITEM: "item_resize",
+    ITEM_RESIZE_HANDLER: "onItem_resize",
+    SLOT: "slot_resize",
+    SLOT_RESIZE_HANDLER: "onSlot_resize",
+};
+
+function useWrapper (props: SlotProps, context: SetupContext, event: string) {
     const shapeKey = props.horizontal ? "offsetWidth" : "offsetHeight";
     const elementRef: Ref = ref(null);
     let resizeObserver: ResizeObserver | undefined;
@@ -15,7 +22,7 @@ function useWrapper (props: SlotProps, context: SetupContext) {
         const newSize = getCurrentSize();
         if (newSize !== currentSize) {
             currentSize = newSize;
-            context.emit(props.event, props.uniqueKey, newSize);
+            context.emit(event, props.uniqueKey, newSize);
         }
     }
 
@@ -49,8 +56,9 @@ function useWrapper (props: SlotProps, context: SetupContext) {
 export const Item = {
     name: "virtual-list-item",
     props: itemProps,
+    emits: [EVENT_TYPE.ITEM],
     setup (props: ItemProps, context: SetupContext) {
-        const { elementRef } = useWrapper(props, context);
+        const { elementRef } = useWrapper(props, context, EVENT_TYPE.ITEM);
         const {
             tag,
             component
@@ -73,9 +81,10 @@ export const Item = {
 // noinspection JSUnusedGlobalSymbols
 export const Slot = {
     props: slotProps,
+    emits: [EVENT_TYPE.SLOT],
     setup (props: SlotProps, context: SetupContext) {
         const { tag, uniqueKey } = props;
-        const { elementRef } = useWrapper(props, context);
+        const { elementRef } = useWrapper(props, context, EVENT_TYPE.SLOT);
 
         const rawProps = {
             key: uniqueKey,

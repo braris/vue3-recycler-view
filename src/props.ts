@@ -142,9 +142,6 @@ export interface RecyclerViewProps {
 }
 
 export const slotProps = {
-    event: {
-        type: String
-    },
     uniqueKey: {
         type: [String, Number]
     },
@@ -157,7 +154,6 @@ export const slotProps = {
 };
 
 export interface SlotProps {
-    event: string;
     uniqueKey: string | number;
     tag: string;
     horizontal: boolean;
