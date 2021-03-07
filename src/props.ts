@@ -1,4 +1,3 @@
-import { PropType } from "vue";
 import { ConcreteComponent } from "@vue/runtime-core";
 
 /**
@@ -6,6 +5,12 @@ import { ConcreteComponent } from "@vue/runtime-core";
  */
 
 export type IdType = number | string;
+
+export interface ListItemProps<T = object, P = object> {
+    source: T;
+    index: number;
+    extraProps: P
+}
 
 export const recyclerViewProps = {
     dataKey: {
@@ -26,7 +31,8 @@ export const recyclerViewProps = {
         default: 30
     },
     extraProps: {
-        type: Object
+        type: Object,
+        default: {}
     },
     estimateSize: {
         type: Number,
@@ -114,7 +120,7 @@ export interface RecyclerViewProps {
     dataKey: string | Function;
     // eslint-disable-next-line
     dataSources: Array<any>;
-    dataComponent: ConcreteComponent<ExtraProps>;
+    dataComponent: ConcreteComponent<ListItemProps>;
     keeps: number;
     extraProps: object;
     estimateSize: number;
@@ -141,7 +147,7 @@ export interface RecyclerViewProps {
     itemScopedSlots: object;
 }
 
-export const slotProps = {
+export const slotWrapperProps = {
     uniqueKey: {
         type: [String, Number]
     },
@@ -153,7 +159,7 @@ export const slotProps = {
     }
 };
 
-export interface SlotProps {
+export interface SlotWrapperProps {
     uniqueKey: string | number;
     tag: string;
     horizontal: boolean;
@@ -184,7 +190,7 @@ export const itemProps = {
         type: [String, Number]
     },
     extraProps: {
-        type: Object as PropType<ExtraProps>,
+        type: Object,
         default: {}
     },
     scopedSlots: {
@@ -193,15 +199,10 @@ export const itemProps = {
     }
 };
 
-export interface ExtraProps {
-    source?: object;
-    index?: number;
-}
-
-export interface ItemProps extends SlotProps {
+export interface WrapperListItemProps extends SlotWrapperProps {
     index: number;
     source: object;
-    component: ConcreteComponent<ExtraProps>;
-    extraProps: ExtraProps;
+    component: ConcreteComponent<ListItemProps>;
+    extraProps: object;
     scopedSlots: object;
 }

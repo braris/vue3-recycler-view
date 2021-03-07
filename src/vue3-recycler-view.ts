@@ -1,7 +1,7 @@
 import { h, ref, Ref, SetupContext, onActivated, VNode, onMounted, onUnmounted, watch } from "vue";
-import { IdType, ItemProps, SlotProps, recyclerViewProps, RecyclerViewProps } from "@/props";
+import { IdType, WrapperListItemProps, SlotWrapperProps, recyclerViewProps, RecyclerViewProps } from "@/props";
 import { Virtual, Range, RangeUpdate } from "@/virtual";
-import { EVENT_TYPE, Item, Slot } from "@/item";
+import { EVENT_TYPE, ItemWrapper, SlotWrapper } from "@/wrappers";
 import { ConcreteComponent } from "@vue/runtime-core";
 
 const EMITTED_EVENT_ITEM_RESIZED = "resized";
@@ -269,11 +269,10 @@ function render (props: RecyclerViewProps, context: SetupContext, root: Ref, she
         const children: VNode[] = [];
         // header slot
         if (header) {
-            const slot: ConcreteComponent<SlotProps> = Slot;
-            const slotProps: SlotProps = {
+            const slot: ConcreteComponent<SlotWrapperProps> = SlotWrapper;
+            const slotProps: SlotWrapperProps = {
                 tag: headerTag,
                 horizontal,
-                event: EVENT_TYPE.SLOT,
                 uniqueKey: SLOT_TYPE.HEADER,
                 class: headerClass,
                 style: headerStyle,
@@ -291,11 +290,10 @@ function render (props: RecyclerViewProps, context: SetupContext, root: Ref, she
 
         // footer slot
         if (footer) {
-            const slot: ConcreteComponent<SlotProps> = Slot;
-            const slotProps: SlotProps = {
+            const slot: ConcreteComponent<SlotWrapperProps> = SlotWrapper;
+            const slotProps: SlotWrapperProps = {
                 tag: footerTag,
                 horizontal,
-                event: EVENT_TYPE.SLOT,
                 uniqueKey: SLOT_TYPE.FOOTER,
                 class: footerClass,
                 style: footerStyle,
@@ -340,7 +338,7 @@ function getRenderSlots (props: RecyclerViewProps, context: SetupContext, virtua
         if (dataSource) {
             const uniqueKey = typeof dataKey === "function" ? dataKey(dataSource) : dataSource[dataKey];
             if (typeof uniqueKey === "string" || typeof uniqueKey === "number") {
-                const itemProps: ItemProps = {
+                const itemProps: WrapperListItemProps = {
                     index,
                     tag: itemTag,
                     horizontal: isHorizontal(props),
@@ -354,7 +352,7 @@ function getRenderSlots (props: RecyclerViewProps, context: SetupContext, virtua
                     // listen item size change
                     [EVENT_TYPE.ITEM_RESIZE_HANDLER]: (id: IdType, size: number) => (onItemResized(context, virtual, id, size))
                 };
-                const item: ConcreteComponent<ItemProps> = Item;
+                const item: ConcreteComponent<WrapperListItemProps> = ItemWrapper;
                 const node = h(item, itemProps);
                 slots.push(node);
             } else {

@@ -1,5 +1,5 @@
 import { h, onBeforeUnmount, onMounted, onUpdated, Ref, ref, SetupContext } from "vue";
-import { ExtraProps, ItemProps, itemProps, SlotProps, slotProps } from "@/props";
+import { ListItemProps, WrapperListItemProps, itemProps, SlotWrapperProps, slotWrapperProps } from "@/props";
 
 export const EVENT_TYPE = {
     ITEM: "item_resize",
@@ -8,7 +8,7 @@ export const EVENT_TYPE = {
     SLOT_RESIZE_HANDLER: "onSlot_resize",
 };
 
-function useWrapper (props: SlotProps, context: SetupContext, event: string) {
+function useWrapper (props: SlotWrapperProps, context: SetupContext, event: string) {
     const shapeKey = props.horizontal ? "offsetWidth" : "offsetHeight";
     const elementRef: Ref = ref(null);
     let resizeObserver: ResizeObserver | undefined;
@@ -53,36 +53,37 @@ function useWrapper (props: SlotProps, context: SetupContext, event: string) {
 }
 
 // noinspection JSUnusedGlobalSymbols
-export const Item = {
+export const ItemWrapper = {
     name: "virtual-list-item",
     props: itemProps,
     emits: [EVENT_TYPE.ITEM],
-    setup (props: ItemProps, context: SetupContext) {
+    setup (props: WrapperListItemProps, context: SetupContext) {
         const { elementRef } = useWrapper(props, context, EVENT_TYPE.ITEM);
         const {
             tag,
             component
         } = props;
         return () => {
-            const extraProps: ExtraProps = {
+            const componentProps : ListItemProps = {
+                index: props.index,
                 source: props.source,
-                index: props.index
-            };
+                extraProps: props.extraProps ?? {}
+            }
             return h(tag, {
                 key: props.uniqueKey,
                 ref: elementRef,
                 role: "listitem"
-            }, [h(component, extraProps)]);
+            }, [h(component, componentProps)]);
         };
     }
 };
 
 // wrapping for slot
 // noinspection JSUnusedGlobalSymbols
-export const Slot = {
-    props: slotProps,
+export const SlotWrapper = {
+    props: slotWrapperProps,
     emits: [EVENT_TYPE.SLOT],
-    setup (props: SlotProps, context: SetupContext) {
+    setup (props: SlotWrapperProps, context: SetupContext) {
         const { tag, uniqueKey } = props;
         const { elementRef } = useWrapper(props, context, EVENT_TYPE.SLOT);
 

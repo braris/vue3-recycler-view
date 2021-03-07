@@ -1,32 +1,43 @@
 <script lang="ts">
-import { markRaw, ref } from "vue";
+import { markRaw, ref, reactive } from "vue";
 import Vue3RecyclerView from "@/vue3-recycler-view";
 import ListItem, { DataItem } from "./list-item.vue";
 
 export default {
-    name: "ServeDev",
-    components: {
-        Vue3RecyclerView,
-        ListItem
-    },
-    setup () {
-        const items = ref(getData(10000));
-        return {
-            items,
-            item: markRaw(ListItem)
-        };
+  name: "ServeDev",
+  components: {
+    Vue3RecyclerView,
+    ListItem
+  },
+  setup () {
+    const items = ref(getData(10000));
+    const extraProps = reactive({
+      desc: "This is extra prop"
+    });
+
+    function buttonClick () {
+      extraProps.desc = "* " +extraProps.desc + " *";
     }
+
+    return {
+      items,
+      item: markRaw(ListItem),
+      extraProps,
+
+      buttonClick
+    };
+  }
 };
 
 function getData (count: number): DataItem[] {
-    const data = [];
-    for (let index = 0; index < count; index++) {
-        data.push({
-            id: index,
-            text: random_data.substr(0, 10 + Math.random() * (random_data.length - 10))
-        });
-    }
-    return data;
+  const data = [];
+  for (let index = 0; index < count; index++) {
+    data.push({
+      id: index,
+      text: random_data.substr(0, 10 + Math.random() * (random_data.length - 10))
+    });
+  }
+  return data;
 }
 
 const random_data = `
@@ -42,39 +53,47 @@ Nunc ac mauris ut neque cursus ultrices vel et nibh. Cras porttitor tempus justo
 </script>
 
 <template>
-    <div id="app">
-        <vue3-recycler-view
-                :data-key="'id'"
-                :data-sources="items"
-                :data-component="item"
-                :keeps="15"
-                class="list"
-                style="height: 500px; overflow-y: auto;">
-            <template v-slot:header>
-                <h1>HEADER</h1>
-            </template>
+  <div id="app">
+    <vue3-recycler-view
+        :data-key="'id'"
+        :data-sources="items"
+        :data-component="item"
+        :keeps="30"
+        :extra-props="extraProps"
 
-            <template v-slot:footer>
-                <h3>FOOTER</h3>
-            </template>
-        </vue3-recycler-view>
+        class="list"
+        style="height: 500px; overflow-y: auto;">
+      <template v-slot:header>
+        <h1>HEADER</h1>
+      </template>
+
+      <template v-slot:footer>
+        <h3>FOOTER</h3>
+      </template>
+    </vue3-recycler-view>
+    <div class="buttons">
+      <button @click="buttonClick">Update list item's extra props</button>
     </div>
+  </div>
 </template>
 
 
 <style scoped>
 #app {
-    font-family: 'Avenir', Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-align: center;
-    color: #2c3e50;
-    margin-top: 1em;
-    padding: 1em;
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 1em;
+  padding: 1em;
 }
 
 .list {
-    border: 1px solid lightgrey;
+  border: 1px solid lightgrey;
+}
 
+.buttons {
+  margin-top: 20px;
 }
 </style>
