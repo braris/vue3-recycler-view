@@ -1,5 +1,5 @@
 import { h, onBeforeUnmount, onMounted, onUpdated, Ref, ref, SetupContext } from "vue";
-import { ListItemProps, WrapperListItemProps, itemProps, SlotWrapperProps, slotWrapperProps } from "@/props";
+import { itemProps, ListItemProps, SlotWrapperProps, slotWrapperProps, WrapperListItemProps } from "@/props";
 
 export const EVENT_TYPE = {
     ITEM: "item_resize",
@@ -18,18 +18,23 @@ function useWrapper (props: SlotWrapperProps, context: SetupContext, event: stri
         return elementRef.value ? elementRef.value[shapeKey] : 0;
     }
 
-    function dispatchSizeChange () {
-        const newSize = getCurrentSize();
-        if (newSize !== currentSize) {
-            currentSize = newSize;
-            context.emit(event, props.uniqueKey, newSize);
+    function dispatchSizeChange (newSize: number | undefined) {
+        const nSize: number = !newSize ? getCurrentSize() : newSize;
+        if (nSize !== currentSize) {
+            currentSize = nSize;
+            context.emit(event, props.uniqueKey, nSize);
         }
     }
 
     onMounted(() => {
         if (typeof ResizeObserver !== "undefined") {
-            resizeObserver = new ResizeObserver(() => {
-                dispatchSizeChange();
+            resizeObserver = new ResizeObserver((entries) => {
+                if (entries.length != 0) {
+                    const entry = entries[0];
+                    const size = props.horizontal ? entry.borderBoxSize[0].inlineSize : entry.borderBoxSize[0].blockSize;
+                    dispatchSizeChange(size);
+                }
+
             });
             resizeObserver.observe(elementRef.value);
         }
@@ -37,7 +42,9 @@ function useWrapper (props: SlotWrapperProps, context: SetupContext, event: stri
 
     // since component will be reused, so dispatch when updated
     onUpdated(() => {
-        dispatchSizeChange();
+        if (!resizeObserver) {
+            dispatchSizeChange(undefined);
+        }
     });
 
     onBeforeUnmount(() => {
@@ -64,11 +71,11 @@ export const ItemWrapper = {
             component
         } = props;
         return () => {
-            const componentProps : ListItemProps = {
+            const componentProps: ListItemProps = {
                 index: props.index,
                 source: props.source,
                 extraProps: props.extraProps ?? {}
-            }
+            };
             return h(tag, {
                 key: props.uniqueKey,
                 ref: elementRef,
