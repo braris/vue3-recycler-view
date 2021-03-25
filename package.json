@@ -1,6 +1,6 @@
 {
   "name": "vue3-recycler-view",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A vue3 component that recycles child components to improve scrolling performance for large lists.",
   "main": "dist/vue3-recycler-view.ssr.js",
   "browser": "dist/vue3-recycler-view.esm.js",
