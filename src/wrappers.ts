@@ -22,7 +22,7 @@ function useWrapper (props: SlotWrapperProps, context: SetupContext, event: stri
         const nSize: number = !newSize ? getCurrentSize() : newSize;
         if (nSize !== currentSize) {
             currentSize = nSize;
-            context.emit(event, props.uniqueKey, nSize);
+            context.emit(event, props.uniqueKey, props.dataId, nSize);
         }
     }
 

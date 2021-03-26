@@ -1,6 +1,6 @@
-import { h, ref, Ref, SetupContext, onActivated, VNode, onMounted, onUnmounted, watch } from "vue";
-import { IdType, WrapperListItemProps, SlotWrapperProps, recyclerViewProps, RecyclerViewProps } from "@/props";
-import { Virtual, Range, RangeUpdate } from "@/virtual";
+import { h, onActivated, onMounted, onUnmounted, Ref, ref, SetupContext, VNode, watch } from "vue";
+import { IdType, recyclerViewProps, RecyclerViewProps, SlotWrapperProps, WrapperListItemProps } from "@/props";
+import { Range, RangeUpdate, Virtual } from "@/virtual";
 import { EVENT_TYPE, ItemWrapper, SlotWrapper } from "@/wrappers";
 import { ConcreteComponent } from "@vue/runtime-core";
 
@@ -35,7 +35,10 @@ export default {
 
         const range: Ref<Range> = ref(new Range());
 
-        const virtual = installVirtual(props, range, r => (range.value = r));
+        const virtual = installVirtual(props,
+                range,
+                r => (range.value = r)
+        );
 
         function onScrollHandler (evt: Event) {
             onScroll(props, context, root.value, virtual, evt);
@@ -106,7 +109,7 @@ function installVirtual (props: RecyclerViewProps, range: Ref<Range>, rangeUpdat
 function getUniqueIdFromDataSources (props: RecyclerViewProps): IdType[] {
     const dataKey = props.dataKey;
     return props.dataSources.map(
-        (dataSource) => typeof dataKey === "function" ? dataKey(dataSource) : dataSource[dataKey]
+            (dataSource) => typeof dataKey === "function" ? dataKey(dataSource) : dataSource[dataKey]
     );
 }
 
@@ -277,7 +280,7 @@ function render (props: RecyclerViewProps, context: SetupContext, root: Ref, she
                 class: headerClass,
                 style: headerStyle,
                 [EVENT_TYPE.SLOT_RESIZE_HANDLER]:
-                    (type: string, size: number, hasInit: boolean) => (onSlotResized(virtual, type, size, hasInit))
+                        (type: string, size: number, hasInit: boolean) => (onSlotResized(virtual, type, size, hasInit))
             };
             children.push(h(slot, slotProps, () => header()));
         }
@@ -298,19 +301,19 @@ function render (props: RecyclerViewProps, context: SetupContext, root: Ref, she
                 class: footerClass,
                 style: footerStyle,
                 [EVENT_TYPE.SLOT_RESIZE_HANDLER]:
-                    (type: string, size: number, hasInit: boolean) => (onSlotResized(virtual, type, size, hasInit))
+                        (type: string, size: number, hasInit: boolean) => (onSlotResized(virtual, type, size, hasInit))
             };
             children.push(h(slot, slotProps, () => footer()));
         }
         children.push(
-            // an empty element use to scroll to bottom
-            h("div", {
-                ref: shepherd,
-                style: {
-                    width: horizontal ? "0px" : "100%",
-                    height: horizontal ? "100%" : "0px"
-                }
-            }));
+                // an empty element use to scroll to bottom
+                h("div", {
+                    ref: shepherd,
+                    style: {
+                        width: horizontal ? "0px" : "100%",
+                        height: horizontal ? "100%" : "0px"
+                    }
+                }));
 
         return h(rootTag, componentProps, children);
     };
