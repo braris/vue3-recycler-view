@@ -37,7 +37,6 @@ export class Virtual {
     private callUpdate?: RangeUpdate;
     private sizes: Map<IdType, number> = new Map<IdType, number>();
     private range = new Range();
-    private firstRangeTotalSize = 0;
     private firstRangeAverageSize = 0;
     private lastCalcIndex = 0;
     private fixedSizeValue = 0;
@@ -45,18 +44,17 @@ export class Virtual {
     private _offset = 0;
     private direction = "";
 
-    constructor (param: VirtualParam, callUpdate: RangeUpdate) {
+    constructor (param: VirtualParam, callUpdate?: RangeUpdate) {
         this.init(param, callUpdate);
     }
 
-    init (param: VirtualParam | undefined, callUpdate: RangeUpdate | undefined) {
+    init (param?: VirtualParam, callUpdate?: RangeUpdate) {
         // param data
         this.param = param;
         this.callUpdate = callUpdate;
 
         // size data
         this.sizes = new Map();
-        this.firstRangeTotalSize = 0;
         this.firstRangeAverageSize = 0;
         this.lastCalcIndex = 0;
         this.fixedSizeValue = 0;
@@ -124,33 +122,32 @@ export class Virtual {
 
     // save each size map by id
     saveSize (id: IdType, size: number) {
-        this.sizes.set(id, size);
+        const oldSize = this.sizes.get(id);
+        if (oldSize !== size) {
+            this.sizes.set(id, size);
 
-        // we assume size type is fixed at the beginning and remember first size value
-        // if there is no size value different from this at next comming saving
-        // we think it's a fixed size list, otherwise is dynamic size list
-        if (this.calcType === CALC_TYPE.INIT) {
-            this.fixedSizeValue = size;
-            this.calcType = CALC_TYPE.FIXED;
-        } else if (this.calcType === CALC_TYPE.FIXED && this.fixedSizeValue !== size) {
-            this.calcType = CALC_TYPE.DYNAMIC;
-            // it's no use at all
-            delete this.fixedSizeValue;
-        }
+            // we assume size type is fixed at the beginning and remember first size value
+            // if there is no size value different from this at next comming saving
+            // we think it's a fixed size list, otherwise is dynamic size list
+            if (this.calcType === CALC_TYPE.INIT) {
+                this.fixedSizeValue = size;
+                this.calcType = CALC_TYPE.FIXED;
+            } else if (this.calcType === CALC_TYPE.FIXED && this.fixedSizeValue !== size) {
+                this.calcType = CALC_TYPE.DYNAMIC;
+                // it's no use at all
+                delete this.fixedSizeValue;
+            }
 
-        // calculate the average size only in the first range
-        if (this.calcType !== CALC_TYPE.FIXED && typeof this.firstRangeTotalSize !== "undefined") {
-            if (this.sizes.size < Math.min(this.param?.keeps ?? Number.MAX_SAFE_INTEGER, this.param?.uniqueIds.length ?? Number.MAX_SAFE_INTEGER)) {
-                this.firstRangeTotalSize = [...this.sizes.values()].reduce((acc, val) => acc + val, 0);
-                this.firstRangeAverageSize = Math.round(this.firstRangeTotalSize / this.sizes.size);
-            } else {
-                // it's done using
-                delete this.firstRangeTotalSize;
+            // calculate the average size only in the first range
+            if (this.calcType !== CALC_TYPE.FIXED) {
+                const firstRangeTotalSize = [...this.sizes.values()].reduce((acc, val) => acc + val, 0);
+                this.firstRangeAverageSize = Math.round(firstRangeTotalSize / this.sizes.size);
             }
         }
     }
 
-    // in some special situation (e.g. length change) we need to update in a row
+
+// in some special situation (e.g. length change) we need to update in a row
     // try going to render next range by a leading buffer according to current direction
     handleDataSourcesChange () {
         let start = this.range.start;

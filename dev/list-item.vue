@@ -7,8 +7,10 @@ export interface DataItem {
   text: string;
 }
 
-interface ExtraProps {
+export interface ExtraProps {
   desc: string;
+  extended: boolean;
+  dynamicHeight: boolean;
 }
 
 export default {
@@ -46,7 +48,14 @@ export default {
         Counter was changed {{ counter }} times
       </div>
     </div>
-    <div>{{ source.text }}</div>
+    <div v-if="extraProps.extended">
+      <div v-if="extraProps.dynamicHeight">
+        {{ source.text }}
+      </div>
+      <div v-else style="height: 200px">
+        Static height context
+      </div>
+    </div>
   </div>
 </template>
 

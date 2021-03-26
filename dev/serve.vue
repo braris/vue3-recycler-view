@@ -1,7 +1,7 @@
 <script lang="ts">
-import { markRaw, ref, reactive } from "vue";
+import { markRaw, reactive, ref } from "vue";
 import Vue3RecyclerView from "@/vue3-recycler-view";
-import ListItem, { DataItem } from "./list-item.vue";
+import ListItem, { DataItem, ExtraProps } from "./list-item.vue";
 
 export default {
   name: "ServeDev",
@@ -10,13 +10,23 @@ export default {
     ListItem
   },
   setup () {
-    const items = ref(getData(10000));
-    const extraProps = reactive({
-      desc: "This is extra prop"
+    const items = ref(getData(100));
+    const extraProps: ExtraProps = reactive({
+      desc: "This is extra prop",
+      extended: false,
+      dynamicHeight: false
     });
 
-    function buttonClick () {
-      extraProps.desc = "* " +extraProps.desc + " *";
+    function changeDescriptionButtonClick () {
+      extraProps.desc = "* " + extraProps.desc + " *";
+    }
+
+    function changeSizeButtonClick () {
+      extraProps.extended = !extraProps.extended;
+    }
+
+    function doubleExtendedButtonClick () {
+      extraProps.dynamicHeight = !extraProps.dynamicHeight;
     }
 
     return {
@@ -24,7 +34,9 @@ export default {
       item: markRaw(ListItem),
       extraProps,
 
-      buttonClick
+      changeDescriptionButtonClick,
+      changeSizeButtonClick,
+      doubleExtendedButtonClick
     };
   }
 };
@@ -62,17 +74,20 @@ Nunc ac mauris ut neque cursus ultrices vel et nibh. Cras porttitor tempus justo
         :extra-props="extraProps"
 
         class="list"
-        style="height: 500px; overflow-y: auto;">
-      <template v-slot:header>
-        <h1>HEADER</h1>
-      </template>
+        style="height: 950px; overflow-y: auto;">
 
-      <template v-slot:footer>
-        <h3>FOOTER</h3>
-      </template>
     </vue3-recycler-view>
     <div class="buttons">
-      <button @click="buttonClick">Update list item's extra props</button>
+      <button @click="changeDescriptionButtonClick">Update list item's extra props</button>
+      <button @click="changeSizeButtonClick">
+        <template v-if="!extraProps.extended">
+          Extend all items  with {{ extraProps.dynamicHeight ? "different size" : "constant size"}}
+        </template>
+        <template v-else>
+          Collapse all items
+        </template>
+      </button>
+      <button @click="doubleExtendedButtonClick"> Switch to {{ !extraProps.dynamicHeight ? "different item size" : "constant item size"}}</button>
     </div>
   </div>
 </template>
@@ -95,5 +110,9 @@ Nunc ac mauris ut neque cursus ultrices vel et nibh. Cras porttitor tempus justo
 
 .buttons {
   margin-top: 20px;
+}
+
+.buttons > button {
+  margin: 0 20px;
 }
 </style>
